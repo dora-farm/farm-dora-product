@@ -1,0 +1,41 @@
+server:
+  port: 8050  # 원하는 포트 번호로 변경하세요 (예: 8080, 9090 등)
+
+spring:
+  datasource:
+    url: ENC(zcdp+SAaPiCpTkstF67V6LmCRJ+HwFUBQdjMVaC+HYvv9GEZj9lQ7DzB8L6As7g13pmrHHTxsgHXWD9seVoz+uO48u6vQ59X)
+    username: ENC(c+tuu0TEFO0xFHNbNIN/7KB95IX5GYgB)
+    password: ENC(fsH0hBCFy+wf7YYvdlqxhv2q0SwjnwaI)
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  servlet:
+    multipart:
+      enabled: true  # 명시적으로 활성화
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+  logging:
+    level:
+      org.springframework.web: DEBUG
+      org.hibernate: INFO
+
+  jpa:
+    hibernate:
+      ddl-auto: validate  # none, validate, update, create, create-drop 중 선택
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+ncp:
+  end-point: https://kr.object.ncloudstorage.com
+  region-name: kr-standard
+  access-key: ENC(8rTlNmISlWOYYrVPIc74zQza2x5LB0bg0K/MufeqMt/f+nmbNBz5iQ==)
+  secret-key: ENC(F5KV6tQ1gh1Cc/iAkvYReFvPxy4NUkIvJFTkbkBzafb/6k9odyN3Y3U5COnowp0mdAbXoIkMSJk=)
+  bucket-name: bitcamp-68
+
+jasypt:
+  encryptor:
+    password: ${key}
+    bean: jasyptEncryptor
