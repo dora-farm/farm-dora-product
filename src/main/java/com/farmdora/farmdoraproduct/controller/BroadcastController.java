@@ -1,19 +1,23 @@
 package com.farmdora.farmdoraproduct.controller;
 
 import com.farmdora.farmdoraproduct.common.response.HttpResponse;
-import com.farmdora.farmdoraproduct.dto.BroadcastDto;
+import com.farmdora.farmdoraproduct.dto.*;
 import com.farmdora.farmdoraproduct.service.BroadcastService;
 import com.farmdora.farmdoraproduct.service.StorageService;
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000") // 프론트와 테스트용 임시 추가
-@RequestMapping("/my/seller/broadcast")
+@RequestMapping("/broadcast")
 public class BroadcastController {
 
     private final BroadcastService broadcastService;
@@ -25,7 +29,7 @@ public class BroadcastController {
     }
 
     @PostMapping("register/{title}")
-    public HttpResponse addProduct(
+    public HttpResponse addVideo(
             @PathVariable("title") String title,
             @RequestPart("file") MultipartFile file) throws IOException {
 
@@ -38,7 +42,7 @@ public class BroadcastController {
         BroadcastDto broadcastDto = BroadcastDto.builder()
                 .sellerId(1) // 추후 jwt 토큰에서 가져오기
                 .title(title)
-                .content(filename)
+                .content(filename+"."+extention)
                 .build();
 
         Integer broadcastId = broadcastService.createVideo(broadcastDto);
@@ -50,5 +54,36 @@ public class BroadcastController {
                 .build();
     }
 
+    //전체 조회 기능 (판매자, 관리자)
+    @GetMapping("list")
+    public ResponseEntity<?> listVideo(@RequestParam(defaultValue = "0") int page) throws IOException {
+        //jwt 코드를 통해서 권한 확인 후 다른 코드 실행
+        PageRequestDto pageRequestDto = new PageRequestDto();
+        pageRequestDto.setPage(page);
+
+        Pageable pageable = pageRequestDto.toPageable();
+        PageResponseDto<BroadcastDto> result = broadcastService.getAllBroadcasts(pageable);
+        //판매자 role 확인 시
+        //PageResponseDto<BroadcastDto> result1 = broadcastService.getBroadcastsBySellerId(sellerId,pageable);
+
+        return ResponseEntity.ok()
+                .body(new HttpResponse(HttpStatus.OK,"조회 성공",result));
+    }
+
+    @DeleteMapping("delete")
+    public HttpResponse deleteVideo(@RequestBody BroadcastIdsDto request){
+
+        List<Integer> broadcastIds = request.getBroadcastIds();
+
+        for (Integer  broadcastId : broadcastIds) {
+            broadcastService.deleteBroadcast(broadcastId);
+        }
+
+        //삭제 성공 시
+        return HttpResponse.builder()
+                .status(200)
+                .message("삭제 성공")
+                .build();
+    }
 
 }

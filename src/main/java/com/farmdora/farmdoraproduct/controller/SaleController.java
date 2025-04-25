@@ -74,6 +74,7 @@ public class SaleController {
 
         List<Integer> saleIds = request.getSaleIds();
         // saleId 중 제일 처음 값을 기준으로 sale->seller_id->seller(user_id) 조회
+        // 판매자 role일 경우 비교 휴 delete 실행
         Integer user_id= saleService.getUserIdBySaleId(saleIds.get(0));
 
 //        if (user_id!= loginUser.getNo()) {

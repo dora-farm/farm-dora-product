@@ -1,12 +1,20 @@
 package com.farmdora.farmdoraproduct.service;
 
 import com.farmdora.farmdoraproduct.dto.BroadcastDto;
+import com.farmdora.farmdoraproduct.dto.PageResponseDto;
 import com.farmdora.farmdoraproduct.entity.Broadcast;
+import com.farmdora.farmdoraproduct.entity.SaleFile;
 import com.farmdora.farmdoraproduct.entity.Seller;
 import com.farmdora.farmdoraproduct.repository.*;
 import jakarta.persistence.EntityNotFoundException;
+import org.apache.commons.io.FilenameUtils;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import org.springframework.data.domain.Pageable;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -54,5 +62,59 @@ public class BroadcastService {
         Broadcast savedBroadcast= broadcastRepository.save(broadcast);
 
         return savedBroadcast.getId();  // 생성된 방송의 ID 반환;
+    }
+
+    // 모든 방송 조회
+    public PageResponseDto<BroadcastDto> getAllBroadcasts(Pageable pageable) {
+        Page<Broadcast> broadcastPage = broadcastRepository.findAll(pageable);
+
+        List<BroadcastDto> broadcastDtoList = broadcastPage.getContent().stream()
+                .map(BroadcastDto::fromEntity)
+                .peek(dto -> {
+                    dto.setThumbnailImage(storageService.getThumbnailUrl(dto.getContent()));
+                    dto.setStreamUrl(storageService.getStreamUrl(dto.getContent()));
+                })
+                .collect(Collectors.toList());
+
+        return new PageResponseDto<>(broadcastDtoList, broadcastPage);
+    }
+
+    // ID로 방송 조회
+    public BroadcastDto getBroadcastById(Integer id) {
+        Broadcast broadcast = broadcastRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("방송을 찾을 수 없습니다. ID: " + id));
+        return BroadcastDto.fromEntity(broadcast);
+    }
+
+    // Seller ID로 방송 목록 조회
+    public PageResponseDto<BroadcastDto> getBroadcastsBySellerId(Integer sellerId, Pageable pageable) {
+        Page<Broadcast> broadcastPage = broadcastRepository.findBySellerId(sellerId, pageable);
+
+        List<BroadcastDto> broadcastDtoList = broadcastPage.getContent().stream()
+                .map(BroadcastDto::fromEntity)
+                .peek(dto -> {
+                    dto.setThumbnailImage(storageService.getThumbnailUrl(dto.getContent()));
+                    dto.setStreamUrl(storageService.getStreamUrl(dto.getContent()));
+                })
+                .collect(Collectors.toList());
+
+        return new PageResponseDto<>(broadcastDtoList, broadcastPage);
+    }
+    // 방송 삭제
+    @Transactional
+    public void deleteBroadcast(Integer id) {
+        Broadcast broadcast = broadcastRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("방송을 찾을 수 없습니다. ID: " + id));
+
+        //오리지널 저장파일 제거
+        storageService.delete("video/"+broadcast.getContent());
+        //확장자 제외 파일이름 추출
+        String filename = FilenameUtils.getBaseName(broadcast.getContent());
+        //인코딩 파일 제거
+        storageService.delete("encoding/farmdora/"+filename+"_AVC_FHD_1Pass_30fps.mp4");
+        //썸네일 제거
+        storageService.delete("thumbnail/farmdora/"+filename+"_01.jpg");
+
+        broadcastRepository.deleteById(id);
     }
 }

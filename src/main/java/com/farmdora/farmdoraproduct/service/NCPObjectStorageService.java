@@ -10,6 +10,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import jakarta.annotation.PostConstruct;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -103,18 +104,21 @@ public class NCPObjectStorageService implements StorageService {
 
     @Override
     public String getThumbnailUrl(String objectName) {
-        // 실제 이미지 URL 생성 // ImageOptimizer 사용. 추후 포맷 변경 가능.
+        //Apache Commons IO 라이브러리를 이용하여 확장자 제외한 파일명 추출
+        String filename = FilenameUtils.getBaseName(objectName);
         String path = "https://zcbg41sa9729.edge.naverncp.com/O8XfcLSSm6/thumbnail/farmdora/";
         String type = "_01.jpg?type=h&h=192&ttype=png";
 
-        return String.format("%s%s%s", path, objectName, type);
+        return String.format("%s%s%s", path, filename, type);
     }
 
     @Override
-    public String getVideoUrl(String objectName) {
+    public String getStreamUrl(String objectName) {
+        //Apache Commons IO 라이브러리를 이용하여 확장자 제외한 파일명 추출
+        String filename = FilenameUtils.getBaseName(objectName);
         String path = "https://zathg7ao9945.edge.naverncp.com/hls/wbR5zPlH2VMUtlW8IylZ9g__/encoding/farmdora/";
         String type = "_AVC_FHD_1Pass_30fps.mp4/index.m3u8";
 
-        return String.format("%s%s%s", path, objectName, type);
+        return String.format("%s%s%s", path, filename, type);
     }
 }

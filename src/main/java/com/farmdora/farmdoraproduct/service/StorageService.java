@@ -11,5 +11,5 @@ public interface StorageService {
     void delete(String filePath);
     String getObjectStorageImageUrl(String objectName);
     String getThumbnailUrl(String objectName);
-    String getVideoUrl(String objectName);
+    String getStreamUrl(String objectName);
 }
