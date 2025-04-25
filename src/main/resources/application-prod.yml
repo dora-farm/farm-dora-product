@@ -2,10 +2,12 @@ server:
   port: 8050  # 원하는 포트 번호로 변경하세요 (예: 8080, 9090 등)
 
 spring:
+  jwt.secret: ENC(AJv6LokZXWCLSDdDEFT1UGe19935JohjmPnbyDPFNQWa+WgVgEaBrsg3Fo8Xo8Myj3KHBd5e5Ka5pLS8nyOm2NNBdvwSAbjfBlpcZENOkyA=)
+
   datasource:
-    url: ENC(zcdp+SAaPiCpTkstF67V6LmCRJ+HwFUBQdjMVaC+HYvv9GEZj9lQ7DzB8L6As7g13pmrHHTxsgHXWD9seVoz+uO48u6vQ59X)
-    username: ENC(c+tuu0TEFO0xFHNbNIN/7KB95IX5GYgB)
-    password: ENC(fsH0hBCFy+wf7YYvdlqxhv2q0SwjnwaI)
+    url: jdbc:mysql://db-33rq8r-kr.vpc-pub-cdb.ntruss.com:3306/farmdora
+    username: farmdora
+    password: farmdora123!
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   servlet:
@@ -31,8 +33,8 @@ spring:
 ncp:
   end-point: https://kr.object.ncloudstorage.com
   region-name: kr-standard
-  access-key: ENC(8rTlNmISlWOYYrVPIc74zQza2x5LB0bg0K/MufeqMt/f+nmbNBz5iQ==)
-  secret-key: ENC(F5KV6tQ1gh1Cc/iAkvYReFvPxy4NUkIvJFTkbkBzafb/6k9odyN3Y3U5COnowp0mdAbXoIkMSJk=)
+  access-key: ncp_iam_BPASKR58WWMsf2TNfnO6
+  secret-key: ncp_iam_BPKSKRJPZ8hGri6MHWZ5kpcwsF8tFGXakF
   bucket-name: bitcamp-68
 
 jasypt:

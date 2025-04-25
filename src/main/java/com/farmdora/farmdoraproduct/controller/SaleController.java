@@ -5,36 +5,48 @@ import com.farmdora.farmdoraproduct.dto.SaleDetailDto;
 import com.farmdora.farmdoraproduct.dto.SaleFileDto;
 import com.farmdora.farmdoraproduct.dto.SaleIdsDto;
 import com.farmdora.farmdoraproduct.dto.SaleRequestDto;
+import com.farmdora.farmdoraproduct.jwt.JwtUtil;
 import com.farmdora.farmdoraproduct.service.SaleService;
 import com.farmdora.farmdoraproduct.service.StorageService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000") // 프론트와 테스트용 임시 추가
 @RequestMapping("/my/seller/item")
 public class SaleController {
 
     private final SaleService saleService;
     private final StorageService storageService;
+    private final JwtUtil jwtUtil;
 
-    public SaleController(SaleService saleService, StorageService storageService) {
+    public SaleController(SaleService saleService, StorageService storageService, JwtUtil jwtUtil) {
         this.saleService = saleService;
         this.storageService = storageService;
+        this.jwtUtil = jwtUtil;
     }
 
     @PostMapping("register")
     public HttpResponse addProduct(
             @RequestPart("productData") String productDataStr,
-            @RequestPart("files") List<MultipartFile> files) throws IOException {
+            @RequestPart("files") List<MultipartFile> files,
+            HttpServletRequest httpServletRequest) throws IOException {
 
-        System.out.println(productDataStr);
+        System.out.println(jwtUtil.extractTokenFromCookie(httpServletRequest));
+
         // JSON 문자열을 DTO 객체로 직접 변환
         SaleRequestDto requestDto =
                 new ObjectMapper().readValue(productDataStr, SaleRequestDto.class);
