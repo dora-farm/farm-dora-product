@@ -58,21 +58,43 @@ public class BroadcastController {
                 .build();
     }
 
-    //전체 조회 기능 (판매자, 관리자)
-    @GetMapping("/seller/list")
-    public ResponseEntity<?> sellerList(@RequestParam(defaultValue = "0") int page) throws IOException {
+    //전체 조회 기능 (판매자)
+    @GetMapping("/seller/list/{size}")
+    public ResponseEntity<?> sellerList(@RequestParam(defaultValue = "0") int page, @PathVariable int size) throws IOException {
         //jwt 코드를 통해서 권한 확인 후 다른 코드 실행
+        int sellerId = 1;
+
         PageRequestDto pageRequestDto = new PageRequestDto();
         pageRequestDto.setPage(page);
+        pageRequestDto.setSize(size);
 
         Pageable pageable = pageRequestDto.toPageable();
-        PageResponseDto<BroadcastDto> result = broadcastService.getAllBroadcasts(pageable);
-        //판매자 role 확인 시
-        //PageResponseDto<BroadcastDto> result1 = broadcastService.getBroadcastsBySellerId(sellerId,pageable);
+        PageResponseDto<BroadcastDto> result = broadcastService.getBroadcastsBySellerId(sellerId,"","", pageable);
 
         return ResponseEntity.ok()
-                .body(new HttpResponse(HttpStatus.OK,"조회 성공",result));
+                .body(new HttpResponse(HttpStatus.OK,"판매자 리스트 조회 성공",result));
     }
+
+    //전체 조회 기능 (판매자)
+    @PostMapping("/seller/search")
+    public ResponseEntity<?> sellerSearchList(@RequestBody BroadcastSearchDto broadcastSearchDto) throws IOException {
+        //jwt 코드를 통해서 권한 확인 후 다른 코드 실행
+        int sellerId = 1;
+
+        String keyword = broadcastSearchDto.getKeyword();
+        String sortBy = broadcastSearchDto.getSort();
+
+        PageRequestDto pageRequestDto = new PageRequestDto();
+        pageRequestDto.setPage(broadcastSearchDto.getPage());
+        pageRequestDto.setSize(broadcastSearchDto.getSize());
+
+        Pageable pageable = pageRequestDto.toPageable();
+        PageResponseDto<BroadcastDto> result = broadcastService.getBroadcastsBySellerId(sellerId,keyword,sortBy,pageable);
+
+        return ResponseEntity.ok()
+                .body(new HttpResponse(HttpStatus.OK,"판매자 리스트 조회 성공",result));
+    }
+
 
     //전체 조회 기능 (관리자)
     @GetMapping("/admin/list")
@@ -83,11 +105,9 @@ public class BroadcastController {
 
         Pageable pageable = pageRequestDto.toPageable();
         PageResponseDto<BroadcastDto> result = broadcastService.getAllBroadcasts(pageable);
-        //판매자 role 확인 시
-        //PageResponseDto<BroadcastDto> result1 = broadcastService.getBroadcastsBySellerId(sellerId,pageable);
 
         return ResponseEntity.ok()
-                .body(new HttpResponse(HttpStatus.OK,"조회 성공",result));
+                .body(new HttpResponse(HttpStatus.OK,"관리자 리스트 조회 성공",result));
     }
 
     @DeleteMapping("delete")

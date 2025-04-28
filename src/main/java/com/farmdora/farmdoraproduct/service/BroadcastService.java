@@ -11,6 +11,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import org.springframework.data.domain.Pageable;
 import java.util.List;
@@ -87,9 +89,37 @@ public class BroadcastService {
         return BroadcastDto.fromEntity(broadcast);
     }
 
-    // Seller ID로 방송 목록 조회
-    public PageResponseDto<BroadcastDto> getBroadcastsBySellerId(Integer sellerId, Pageable pageable) {
-        Page<Broadcast> broadcastPage = broadcastRepository.findBySellerId(sellerId, pageable);
+    // Seller ID로 방송 목록 조회 (키워드 검색 및 정렬 기능 추가)
+    public PageResponseDto<BroadcastDto> getBroadcastsBySellerId(
+            Integer sellerId,
+            String keyword,
+            String sortBy,
+            Pageable pageable) {
+
+        // 정렬 설정
+        Pageable pageableWithSort;
+        if ("OLDEST".equals(sortBy)) {
+            pageableWithSort = PageRequest.of(
+                    pageable.getPageNumber(),
+                    pageable.getPageSize(),
+                    Sort.by(Sort.Direction.ASC, "createdDate") // created_date 컬럼에 매핑되는 필드명
+            );
+        } else { // "LATEST"가 기본값
+            pageableWithSort = PageRequest.of(
+                    pageable.getPageNumber(),
+                    pageable.getPageSize(),
+                    Sort.by(Sort.Direction.DESC, "createdDate") // created_date 컬럼에 매핑되는 필드명
+            );
+        }
+
+        Page<Broadcast> broadcastPage;
+
+        // 키워드 유무에 따른 쿼리 실행
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            broadcastPage = broadcastRepository.searchBySellerId(sellerId, keyword, pageableWithSort);
+        } else {
+            broadcastPage = broadcastRepository.findBySellerId(sellerId, pageableWithSort);
+        }
 
         List<BroadcastDto> broadcastDtoList = broadcastPage.getContent().stream()
                 .map(BroadcastDto::fromEntity)

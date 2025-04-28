@@ -9,12 +9,16 @@ import org.springframework.data.domain.Pageable;
 @Setter
 public class PageRequestDto {
     private Integer page;
+    private Integer size;
 
     public Pageable toPageable() {
-        final int size = 15;
-        if (this.page != null) {
-            return PageRequest.of(this.page, size);
-        }
-        return PageRequest.of(0, size);
+        final int defaultSize = 15;
+        // size가 null이면 기본값 사용, 아니면 전달된 값 사용
+        int pageSize = (this.size != null) ? this.size : defaultSize;
+
+        // page가 null이면 0페이지, 아니면 전달된
+        int pageNumber = (this.page != null) ? this.page : 0;
+
+        return PageRequest.of(pageNumber, pageSize);
     }
 }
