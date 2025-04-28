@@ -17,7 +17,7 @@ import java.util.UUID;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000") // 프론트와 테스트용 임시 추가
-@RequestMapping("/broadcast")
+@RequestMapping("/video")
 public class BroadcastController {
 
     private final BroadcastService broadcastService;
@@ -28,20 +28,24 @@ public class BroadcastController {
         this.storageService = storageService;
     }
 
-    @PostMapping("register/{title}")
+    @PostMapping("register")
     public HttpResponse addVideo(
-            @PathVariable("title") String title,
-            @RequestPart("file") MultipartFile file) throws IOException {
+            @RequestParam("title") String title,
+            @RequestParam("desc") String desc,
+            @RequestParam("video") MultipartFile video) throws IOException {
 
         //확장자 추출
-        String extention = FilenameUtils.getExtension(file.getOriginalFilename());
+        String extention = FilenameUtils.getExtension(video.getOriginalFilename());
         String filename = UUID.randomUUID().toString();
 
-        storageService.upload("video/" + filename +"."+extention, file.getInputStream());
+        System.out.println(filename);
+
+        storageService.upload("video/" + filename +"."+extention, video.getInputStream());
 
         BroadcastDto broadcastDto = BroadcastDto.builder()
                 .sellerId(1) // 추후 jwt 토큰에서 가져오기
                 .title(title)
+                .desc(desc)
                 .content(filename+"."+extention)
                 .build();
 
@@ -55,8 +59,24 @@ public class BroadcastController {
     }
 
     //전체 조회 기능 (판매자, 관리자)
-    @GetMapping("list")
-    public ResponseEntity<?> listVideo(@RequestParam(defaultValue = "0") int page) throws IOException {
+    @GetMapping("/seller/list")
+    public ResponseEntity<?> sellerList(@RequestParam(defaultValue = "0") int page) throws IOException {
+        //jwt 코드를 통해서 권한 확인 후 다른 코드 실행
+        PageRequestDto pageRequestDto = new PageRequestDto();
+        pageRequestDto.setPage(page);
+
+        Pageable pageable = pageRequestDto.toPageable();
+        PageResponseDto<BroadcastDto> result = broadcastService.getAllBroadcasts(pageable);
+        //판매자 role 확인 시
+        //PageResponseDto<BroadcastDto> result1 = broadcastService.getBroadcastsBySellerId(sellerId,pageable);
+
+        return ResponseEntity.ok()
+                .body(new HttpResponse(HttpStatus.OK,"조회 성공",result));
+    }
+
+    //전체 조회 기능 (관리자)
+    @GetMapping("/admin/list")
+    public ResponseEntity<?> adminList(@RequestParam(defaultValue = "0") int page) throws IOException {
         //jwt 코드를 통해서 권한 확인 후 다른 코드 실행
         PageRequestDto pageRequestDto = new PageRequestDto();
         pageRequestDto.setPage(page);

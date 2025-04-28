@@ -16,6 +16,7 @@ public class BroadcastDto {
     private Integer id;
     private Integer sellerId;  // 엔티티의 연관관계 대신 ID만 사용
     private String title;
+    private String desc;
     private String content;
     private boolean isBlind;
     private LocalDateTime createdAt;  // BaseTimeEntity에서 상속받은 필드
@@ -31,6 +32,7 @@ public class BroadcastDto {
                 .id(broadcast.getId())
                 .sellerId(broadcast.getSeller().getId())  // 연관된 Seller의 ID만 추출
                 .title(broadcast.getTitle())
+                .desc(broadcast.getDesc())
                 .content(broadcast.getContent())
                 .isBlind(broadcast.isBlind())
                 .createdAt(broadcast.getCreatedDate())

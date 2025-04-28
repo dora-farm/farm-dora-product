@@ -51,8 +51,8 @@ public class SecurityConfig {
 //                        .requestMatchers("/api/common/**").hasAnyRole("ADMIN", "SELLER", "USER")
 //                        // 그 외 요청은 인증만 필요
 //                        .anyRequest().authenticated())
-                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil),
-                        UsernamePasswordAuthenticationFilter.class)
+//                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil),
+//                        UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement((session)->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();

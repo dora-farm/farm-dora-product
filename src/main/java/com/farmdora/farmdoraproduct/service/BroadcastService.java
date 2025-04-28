@@ -55,6 +55,7 @@ public class BroadcastService {
         Broadcast broadcast = Broadcast.builder()
                 .seller(seller)
                 .title(broadcastDto.getTitle())
+                .desc(broadcastDto.getDesc())
                 .content(broadcastDto.getContent())
                 .isBlind(false)  // 초기값 설정
                 .build();
@@ -113,8 +114,13 @@ public class BroadcastService {
         //인코딩 파일 제거
         storageService.delete("encoding/farmdora/"+filename+"_AVC_FHD_1Pass_30fps.mp4");
         //썸네일 제거
-        storageService.delete("thumbnail/farmdora/"+filename+"_01.jpg");
-
+        for(int i =1; i<11; i++) {
+            if(i==10){ //썸네일 10개 모두 삭제
+                storageService.delete("thumbnail/farmdora/" + filename + "_"+i+".jpg");
+                continue;
+            }
+            storageService.delete("thumbnail/farmdora/" + filename + "_0"+i+".jpg");
+        }
         broadcastRepository.deleteById(id);
     }
 }

@@ -34,6 +34,9 @@ public class Broadcast extends BaseTimeEntity {
     @Column(nullable = false, length = 50)
     private String title;
 
+    @Column(nullable = false, length = 50, name= "description")
+    private String desc;
+
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
