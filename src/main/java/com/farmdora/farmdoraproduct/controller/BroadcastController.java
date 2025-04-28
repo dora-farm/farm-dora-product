@@ -126,4 +126,23 @@ public class BroadcastController {
                 .build();
     }
 
+    @PutMapping("updateStatus/{videoId}")
+    public HttpResponse updateStatus(@PathVariable Integer videoId) {
+
+        Integer result = broadcastService.updateStatus(videoId);
+
+        if (result == 1) {
+            return HttpResponse.builder()
+                    .status(200)
+                    .message("상태 수정 성공")
+                    .build();
+        }
+        else {
+            return HttpResponse.builder()
+                    .status(500)
+                    .message("상태 수정 실패")
+                    .build();
+        }
+    }
+
 }

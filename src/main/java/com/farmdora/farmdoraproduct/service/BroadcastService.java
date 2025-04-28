@@ -3,6 +3,7 @@ package com.farmdora.farmdoraproduct.service;
 import com.farmdora.farmdoraproduct.dto.BroadcastDto;
 import com.farmdora.farmdoraproduct.dto.PageResponseDto;
 import com.farmdora.farmdoraproduct.entity.Broadcast;
+import com.farmdora.farmdoraproduct.entity.Sale;
 import com.farmdora.farmdoraproduct.entity.SaleFile;
 import com.farmdora.farmdoraproduct.entity.Seller;
 import com.farmdora.farmdoraproduct.repository.*;
@@ -153,4 +154,15 @@ public class BroadcastService {
         }
         broadcastRepository.deleteById(id);
     }
+
+    public Integer updateStatus(Integer videoId) {
+
+        Broadcast broadcast = broadcastRepository.findById(videoId)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 동영상 ID입니다: " + videoId));
+
+        broadcast.setBlind(!broadcast.isBlind());
+
+        return 1;
+    }
+
 }
