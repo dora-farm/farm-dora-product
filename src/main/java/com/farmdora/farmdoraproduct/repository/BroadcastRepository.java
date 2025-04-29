@@ -1,6 +1,6 @@
 package com.farmdora.farmdoraproduct.repository;
 
-import com.farmdora.farmdoraproduct.dto.BroadcastListDto;
+import com.farmdora.farmdoraproduct.dto.BroadcastMainDto;
 import com.farmdora.farmdoraproduct.entity.Broadcast;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,9 +24,9 @@ public interface BroadcastRepository extends JpaRepository<Broadcast, Integer> {
     @Query("SELECT b FROM Broadcast b WHERE LOWER(b.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(b.desc) LIKE LOWER(CONCAT('%', :keyword, '%'))")
     Page<Broadcast> findByKeyword(@Param("keyword") String keyword, Pageable pageable);
 
-    @Query("SELECT new com.farmdora.farmdoraproduct.dto.BroadcastListDto(" +
+    @Query("SELECT new com.farmdora.farmdoraproduct.dto.BroadcastMainDto(" +
             "b.id, b.seller, b.title, b.content, b.desc, b.isBlind, b.createdDate) " +
             "FROM Broadcast b JOIN b.seller s WHERE b.isBlind = false")
-    Page<BroadcastListDto> findAllNotBlindedAsDto(Pageable pageable);
+    Page<BroadcastMainDto> findAllNotBlindedAsDto(Pageable pageable);
     
 }

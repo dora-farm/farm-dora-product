@@ -168,14 +168,17 @@ public class BroadcastController {
 
     //전체 조회 기능 (메인)
     @GetMapping("/main/list")
-    public ResponseEntity<?> adminList(@RequestParam(defaultValue = "0") int page) throws IOException {
+    public ResponseEntity<?> mainList(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "6") int size
+    ) throws IOException {
         //jwt 코드를 통해서 권한 확인 후 코드 실행
         PageRequestDto pageRequestDto = new PageRequestDto();
         pageRequestDto.setPage(page);
-        pageRequestDto.setSize(8); //8개 씩 추출
+        pageRequestDto.setSize(size); //6개 씩 추출
 
         Pageable pageable = pageRequestDto.toPageable();
-        PageResponseDto<BroadcastListDto> result = broadcastService.findAllByIsBlindFalse(pageable);
+        PageResponseDto<BroadcastMainDto> result = broadcastService.findAllByIsBlindFalse(pageable);
 
         return ResponseEntity.ok()
                 .body(new HttpResponse(HttpStatus.OK,"메인 동영상 리스트 조회 성공",result));

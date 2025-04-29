@@ -1,11 +1,9 @@
 package com.farmdora.farmdoraproduct.service;
 
 import com.farmdora.farmdoraproduct.dto.BroadcastDto;
-import com.farmdora.farmdoraproduct.dto.BroadcastListDto;
+import com.farmdora.farmdoraproduct.dto.BroadcastMainDto;
 import com.farmdora.farmdoraproduct.dto.PageResponseDto;
 import com.farmdora.farmdoraproduct.entity.Broadcast;
-import com.farmdora.farmdoraproduct.entity.Sale;
-import com.farmdora.farmdoraproduct.entity.SaleFile;
 import com.farmdora.farmdoraproduct.entity.Seller;
 import com.farmdora.farmdoraproduct.repository.*;
 import jakarta.persistence.EntityNotFoundException;
@@ -194,13 +192,13 @@ public class BroadcastService {
     }
 
     // 블라인드 처리되지 않은 동영상 조회
-    public PageResponseDto<BroadcastListDto> findAllByIsBlindFalse(Pageable pageable) {
+    public PageResponseDto<BroadcastMainDto> findAllByIsBlindFalse(Pageable pageable) {
         try {
             // 직접 리포지토리에서 결과 가져오기
-            Page<BroadcastListDto> broadcastPage = broadcastRepository.findAllNotBlindedAsDto(pageable);
+            Page<BroadcastMainDto> broadcastPage = broadcastRepository.findAllNotBlindedAsDto(pageable);
 
             // 각 DTO에 thumbnailImage와 streamUrl 설정
-            List<BroadcastListDto> broadcastListDtoList = broadcastPage.getContent().stream()
+            List<BroadcastMainDto> broadcastListDtoMain = broadcastPage.getContent().stream()
                     .peek(dto -> {
                         try {
                             dto.setThumbnailImage(storageService.getThumbnailUrl(dto.getContent()));
@@ -213,7 +211,7 @@ public class BroadcastService {
                     })
                     .collect(Collectors.toList());
 
-            return new PageResponseDto<>(broadcastListDtoList, broadcastPage);
+            return new PageResponseDto<>(broadcastListDtoMain, broadcastPage);
         } catch (Exception e) {
             // 전체 처리 중 오류 발생 시 처리
             throw new ServiceException("방송 목록을 불러오는 중 오류가 발생했습니다.", e);
