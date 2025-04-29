@@ -20,4 +20,9 @@ public interface BroadcastRepository extends JpaRepository<Broadcast, Integer> {
             @Param("sellerId") Integer sellerId,
             @Param("keyword") String keyword,
             Pageable pageable);
+
+    // 키워드로 검색하는 메서드 추가
+    @Query("SELECT b FROM Broadcast b WHERE LOWER(b.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(b.desc) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+    Page<Broadcast> findByKeyword(@Param("keyword") String keyword, Pageable pageable);
+
 }

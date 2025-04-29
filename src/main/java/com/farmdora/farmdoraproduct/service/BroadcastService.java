@@ -68,9 +68,34 @@ public class BroadcastService {
         return savedBroadcast.getId();  // 생성된 방송의 ID 반환;
     }
 
-    // 모든 방송 조회
-    public PageResponseDto<BroadcastDto> getAllBroadcasts(Pageable pageable) {
-        Page<Broadcast> broadcastPage = broadcastRepository.findAll(pageable);
+    // 모든 방송 조회 // 관리자 및 메인페이지 용
+    public PageResponseDto<BroadcastDto> getAllBroadcasts
+    (String keyword, String sortBy, Pageable pageable) {
+
+        // 정렬 설정
+        Pageable pageableWithSort;
+        if ("OLDEST".equals(sortBy)) {
+            pageableWithSort = PageRequest.of(
+                    pageable.getPageNumber(),
+                    pageable.getPageSize(),
+                    Sort.by(Sort.Direction.ASC, "createdDate") // created_date 컬럼에 매핑되는 필드명
+            );
+        } else { // "LATEST"가 기본값
+            pageableWithSort = PageRequest.of(
+                    pageable.getPageNumber(),
+                    pageable.getPageSize(),
+                    Sort.by(Sort.Direction.DESC, "createdDate") // created_date 컬럼에 매핑되는 필드명
+            );
+        }
+
+        Page<Broadcast> broadcastPage;
+
+        // 키워드 유무에 따른 쿼리 실행
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            broadcastPage = broadcastRepository.findByKeyword(keyword, pageableWithSort);
+        } else {
+            broadcastPage = broadcastRepository.findAll(pageableWithSort);
+        }
 
         List<BroadcastDto> broadcastDtoList = broadcastPage.getContent().stream()
                 .map(BroadcastDto::fromEntity)
@@ -86,7 +111,7 @@ public class BroadcastService {
     // ID로 방송 조회
     public BroadcastDto getBroadcastById(Integer id) {
         Broadcast broadcast = broadcastRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("방송을 찾을 수 없습니다. ID: " + id));
+                .orElseThrow(() -> new RuntimeException("동영상을 찾을 수 없습니다. ID: " + id));
         return BroadcastDto.fromEntity(broadcast);
     }
 
@@ -136,7 +161,7 @@ public class BroadcastService {
     @Transactional
     public void deleteBroadcast(Integer id) {
         Broadcast broadcast = broadcastRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("방송을 찾을 수 없습니다. ID: " + id));
+                .orElseThrow(() -> new RuntimeException("동영상을 찾을 수 없습니다. ID: " + id));
 
         //오리지널 저장파일 제거
         storageService.delete("video/"+broadcast.getContent());
@@ -155,6 +180,7 @@ public class BroadcastService {
         broadcastRepository.deleteById(id);
     }
 
+    //관리자, 판매자 공통 사용
     public Integer updateStatus(Integer videoId) {
 
         Broadcast broadcast = broadcastRepository.findById(videoId)
