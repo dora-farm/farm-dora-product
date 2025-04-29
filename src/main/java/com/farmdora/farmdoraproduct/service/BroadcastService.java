@@ -1,6 +1,7 @@
 package com.farmdora.farmdoraproduct.service;
 
 import com.farmdora.farmdoraproduct.dto.BroadcastDto;
+import com.farmdora.farmdoraproduct.dto.BroadcastListDto;
 import com.farmdora.farmdoraproduct.dto.PageResponseDto;
 import com.farmdora.farmdoraproduct.entity.Broadcast;
 import com.farmdora.farmdoraproduct.entity.Sale;
@@ -9,6 +10,7 @@ import com.farmdora.farmdoraproduct.entity.Seller;
 import com.farmdora.farmdoraproduct.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import org.apache.commons.io.FilenameUtils;
+import org.hibernate.service.spi.ServiceException;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -191,4 +193,30 @@ public class BroadcastService {
         return 1;
     }
 
+    // 블라인드 처리되지 않은 동영상 조회
+    public PageResponseDto<BroadcastListDto> findAllByIsBlindFalse(Pageable pageable) {
+        try {
+            // 직접 리포지토리에서 결과 가져오기
+            Page<BroadcastListDto> broadcastPage = broadcastRepository.findAllNotBlindedAsDto(pageable);
+
+            // 각 DTO에 thumbnailImage와 streamUrl 설정
+            List<BroadcastListDto> broadcastListDtoList = broadcastPage.getContent().stream()
+                    .peek(dto -> {
+                        try {
+                            dto.setThumbnailImage(storageService.getThumbnailUrl(dto.getContent()));
+                            dto.setStreamUrl(storageService.getStreamUrl(dto.getContent()));
+                        } catch (Exception e) {
+                            // 기본값 설정
+                            dto.setThumbnailImage("error_thumbnail_url");
+                            dto.setStreamUrl("error_stream_url");
+                        }
+                    })
+                    .collect(Collectors.toList());
+
+            return new PageResponseDto<>(broadcastListDtoList, broadcastPage);
+        } catch (Exception e) {
+            // 전체 처리 중 오류 발생 시 처리
+            throw new ServiceException("방송 목록을 불러오는 중 오류가 발생했습니다.", e);
+        }
+    }
 }

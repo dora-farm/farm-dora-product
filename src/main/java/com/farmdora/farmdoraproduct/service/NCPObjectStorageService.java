@@ -107,7 +107,7 @@ public class NCPObjectStorageService implements StorageService {
         //Apache Commons IO 라이브러리를 이용하여 확장자 제외한 파일명 추출
         String filename = FilenameUtils.getBaseName(objectName);
         String path = "https://zcbg41sa9729.edge.naverncp.com/O8XfcLSSm6/thumbnail/farmdora/";
-        String type = "_01.jpg?type=h&h=192&ttype=png";
+        String type = "_02.jpg?type=h&h=192&ttype=png";
 
         return String.format("%s%s%s", path, filename, type);
     }
