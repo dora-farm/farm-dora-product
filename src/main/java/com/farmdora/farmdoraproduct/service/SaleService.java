@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -249,5 +250,29 @@ public class SaleService {
         sale.setBlind(!sale.isBlind());
 
         return 1;
+    }
+
+    public List<BroadcastSaleDto> findSellerProductsBySellerId(int id) {
+
+        List<Sale> sales = saleRepository.findBySellerId(id);
+
+        return sales.stream().map(sale -> {
+            // 첫 번째 Option 조회
+            Option option = optionRepository.findFirstBySaleIdOrderByIdAsc(sale.getId())
+                    .orElse(null);
+
+            // 메인 이미지 조회
+            SaleFile mainFile = saleFileRepository.findFirstBySaleIdAndIsMainFalse(sale.getId())
+                    .orElse(null);
+
+            // DTO 생성
+            return BroadcastSaleDto.builder()
+                    .id(sale.getId())
+                    .title(sale.getTitle())
+                    .name(option != null ? option.getName() : null)
+                    .price(option != null ? option.getPrice() : 0)
+                    .mainImage(storageService.getObjectStorageImageUrl(mainFile.getSaveFile()))
+                    .build();
+        }).collect(Collectors.toList());
     }
 }

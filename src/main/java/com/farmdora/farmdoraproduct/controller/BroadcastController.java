@@ -184,4 +184,14 @@ public class BroadcastController {
                 .body(new HttpResponse(HttpStatus.OK,"메인 동영상 리스트 조회 성공",result));
     }
 
+    //전체 조회 기능 (메인)
+    @GetMapping("/main/detail/{id}")
+    public ResponseEntity<?> mainDetail(@PathVariable int id) {
+
+        BroadcastMainDto broadcastMainDto = broadcastService.getVideoDetail(id);
+
+        return ResponseEntity.ok()
+                .body(new HttpResponse(HttpStatus.OK,"동영상 조회 성공",broadcastMainDto));
+    }
+
 }
