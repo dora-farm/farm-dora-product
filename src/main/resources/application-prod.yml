@@ -1,0 +1,43 @@
+server:
+  port: 8050  # 원하는 포트 번호로 변경하세요 (예: 8080, 9090 등)
+
+spring:
+  jwt.secret: ENC(AJv6LokZXWCLSDdDEFT1UGe19935JohjmPnbyDPFNQWa+WgVgEaBrsg3Fo8Xo8Myj3KHBd5e5Ka5pLS8nyOm2NNBdvwSAbjfBlpcZENOkyA=)
+
+  datasource:
+    url: jdbc:mysql://db-33rq8r-kr.vpc-pub-cdb.ntruss.com:3306/farmdora
+    username: farmdora
+    password: farmdora123!
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  servlet:
+    multipart:
+      enabled: true  # 명시적으로 활성화
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+  logging:
+    level:
+      org.springframework.web: DEBUG
+      org.hibernate: INFO
+
+  jpa:
+    hibernate:
+      ddl-auto: validate  # none, validate, update, create, create-drop 중 선택
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+ncp:
+  end-point: https://kr.object.ncloudstorage.com
+  region-name: kr-standard
+  access-key: ncp_iam_BPASKR58WWMsf2TNfnO6
+  secret-key: ncp_iam_BPKSKRJPZ8hGri6MHWZ5kpcwsF8tFGXakF
+  bucket-name: bitcamp-68
+
+jasypt:
+  encryptor:
+    password: ${key}
+    bean: jasyptEncryptor
