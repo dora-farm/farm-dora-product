@@ -8,22 +8,17 @@ import com.farmdora.farmdoraproduct.service.StorageService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
-import static com.farmdora.farmdoraproduct.common.response.ErrorMessage.*;
+import static com.farmdora.farmdoraproduct.common.response.ErrorMessage.DELETE_FAIL;
+import static com.farmdora.farmdoraproduct.common.response.ErrorMessage.UPDATE_FAIL;
 import static com.farmdora.farmdoraproduct.common.response.SuccessMessage.*;
 
 @RestController
@@ -42,16 +37,20 @@ public class SaleController {
 
     @PostMapping("register")
     public HttpResponse addProduct(
+//            Principal principal,
             @RequestPart("productData") String productDataStr,
             @RequestPart("files") List<MultipartFile> files,
             HttpServletRequest httpServletRequest) throws IOException {
-
-        System.out.println(jwtUtil.extractTokenFromCookie(httpServletRequest));
-
+        //user 아이디 추출
+//        Integer userId = Integer.parseInt(principal.getName());
+        Integer userId = Integer.parseInt("3"); //userId -> sellerId 변환 테스트용
+        Integer sellerId = saleService.getSellerId(userId);
+        System.out.println(sellerId);
         // JSON 문자열을 DTO 객체로 직접 변환
         SaleRequestDto requestDto =
                 new ObjectMapper().readValue(productDataStr, SaleRequestDto.class);
-
+        //principal에서 추출한 sellerId setter로 주입.
+        requestDto.setSellerId(sellerId);
         ArrayList<SaleFileDto> fileList = new ArrayList<>();
         boolean isFirstFile = false; // 첫 번째 파일 여부를 추적하는 플래그, 0이 메인
 
@@ -72,7 +71,6 @@ public class SaleController {
 
         requestDto.setFiles(fileList);
 
-
         Integer saleId = saleService.createSale(requestDto);
 
         //입력 성공 시
@@ -86,16 +84,6 @@ public class SaleController {
     public HttpResponse deleteProduct(@RequestBody SaleIdsDto request){
 
         List<Integer> saleIds = request.getSaleIds();
-        // saleId 중 제일 처음 값을 기준으로 sale->seller_id->seller(user_id) 조회
-        // 판매자 role일 경우 비교 휴 delete 실행
-        Integer user_id= saleService.getUserIdBySaleId(saleIds.get(0));
-
-//        if (user_id!= loginUser.getNo()) {
-//            return HttpResponse.builder()
-//                    .status()
-//                    .data("삭제 권한이 없습니다.")
-//                    .build();
-//        }
 
         for (Integer saleId : saleIds) {
             saleService.deleteSale(saleId);

@@ -40,17 +40,23 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable)
-//                .authorizeHttpRequests((auth)-> auth
-//                        // 공개 API
-//                        .requestMatchers("/api/public/**").permitAll()
-//                        // 특정 권한이 필요한 API
-//                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-//                        .requestMatchers("/api/seller/**").hasRole("SELLER")
-//                        .requestMatchers("/api/user/**").hasRole("USER")
-//                        // 여러 권한에 접근 가능한 API
-//                        .requestMatchers("/api/common/**").hasAnyRole("ADMIN", "SELLER", "USER")
-//                        // 그 외 요청은 인증만 필요
-//                        .anyRequest().authenticated())
+//                .authorizeHttpRequests(auth -> auth
+//                    // 공개 API
+//                    .requestMatchers("/video/main/**", "/my/seller/item/video/**").permitAll()
+//                    // 특정 권한이 필요한 API
+//                    .requestMatchers("/my/seller/item/register").hasRole("SELLER")
+//                    .requestMatchers("/my/seller/item/update").hasRole("SELLER")
+//                    .requestMatchers("/video/register").hasRole("SELLER")
+//                    .requestMatchers("/video/seller/**").hasRole("SELLER")
+//                    .requestMatchers("/video/admin/**").hasRole("ADMIN")
+//                    // 여러 권한에 접근 가능한 API
+//                    .requestMatchers("/my/seller/item/delete").hasAnyRole("ADMIN", "SELLER")
+//                    .requestMatchers("/my/seller/item/detail").hasAnyRole("ADMIN", "SELLER")
+//                    .requestMatchers("/my/seller/item/updateStatus").hasAnyRole("ADMIN", "SELLER")
+//                    .requestMatchers("/video/delete").hasAnyRole("ADMIN", "SELLER")
+//                    .requestMatchers("/video/updateStatus").hasAnyRole("ADMIN", "SELLER")
+//                    // 그 외 요청은 인증만 필요
+//                    .anyRequest().authenticated())
 //                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil),
 //                        UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement((session)->

@@ -2,9 +2,14 @@ package com.farmdora.farmdoraproduct.repository;
 
 import com.farmdora.farmdoraproduct.entity.Seller;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
 
 @Repository
 public interface SellerRepository extends JpaRepository<Seller, Integer> {
-    // 필요한 커스텀 쿼리 메서드 추가
+    @Query("SELECT s FROM Seller s WHERE s.user.userId = :userId")
+    Optional<Seller> findSellerByUserId(@Param("userId") Integer userId);
 }

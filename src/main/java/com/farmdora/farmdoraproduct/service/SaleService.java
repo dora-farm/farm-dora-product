@@ -276,4 +276,11 @@ public class SaleService {
                     .build();
         }).collect(Collectors.toList());
     }
+
+    //user_id로 seller_id 추출
+    public Integer getSellerId(Integer userId) {
+        Seller seller = sellerRepository.findSellerByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Sale Id:", userId));
+        return seller.getId();
+    }
 }
