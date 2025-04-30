@@ -72,10 +72,10 @@ public class BroadcastController {
         PageResponseDto<BroadcastDto> result = broadcastService.getBroadcastsBySellerId(sellerId,"","", pageable);
 
         return ResponseEntity.ok()
-                .body(new HttpResponse(HttpStatus.OK,"판매자 리스트 조회 성공",result));
+                .body(new HttpResponse(HttpStatus.OK,"판매자 동영상 리스트 조회 성공",result));
     }
 
-    //전체 조회 기능 (판매자)
+    //검색 조회 기능 (판매자)
     @PostMapping("/seller/search")
     public ResponseEntity<?> sellerSearchList(@RequestBody BroadcastSearchDto broadcastSearchDto) throws IOException {
         //jwt 코드를 통해서 권한 확인 후 다른 코드 실행
@@ -92,23 +92,43 @@ public class BroadcastController {
         PageResponseDto<BroadcastDto> result = broadcastService.getBroadcastsBySellerId(sellerId,keyword,sortBy,pageable);
 
         return ResponseEntity.ok()
-                .body(new HttpResponse(HttpStatus.OK,"판매자 리스트 조회 성공",result));
+                .body(new HttpResponse(HttpStatus.OK,"판매자 동영상 리스트 검색 조회 성공",result));
     }
 
 
     //전체 조회 기능 (관리자)
-    @GetMapping("/admin/list")
-    public ResponseEntity<?> adminList(@RequestParam(defaultValue = "0") int page) throws IOException {
+    @GetMapping("/admin/list/{size}")
+    public ResponseEntity<?> adminList(@RequestParam(defaultValue = "0") int page, @PathVariable int size ) throws IOException {
         //jwt 코드를 통해서 권한 확인 후 다른 코드 실행
         PageRequestDto pageRequestDto = new PageRequestDto();
         pageRequestDto.setPage(page);
+        pageRequestDto.setSize(size);
 
         Pageable pageable = pageRequestDto.toPageable();
-        PageResponseDto<BroadcastDto> result = broadcastService.getAllBroadcasts(pageable);
+        PageResponseDto<BroadcastDto> result = broadcastService.getAllBroadcasts("","",pageable);
 
         return ResponseEntity.ok()
-                .body(new HttpResponse(HttpStatus.OK,"관리자 리스트 조회 성공",result));
+                .body(new HttpResponse(HttpStatus.OK,"관리자 동영상 리스트 조회 성공",result));
     }
+
+    //검색 조회 기능 (관리자)
+    @PostMapping("/admin/search")
+    public ResponseEntity<?> adminSearchList(@RequestBody BroadcastSearchDto broadcastSearchDto) throws IOException {
+
+        String keyword = broadcastSearchDto.getKeyword();
+        String sortBy = broadcastSearchDto.getSort();
+
+        PageRequestDto pageRequestDto = new PageRequestDto();
+        pageRequestDto.setPage(broadcastSearchDto.getPage());
+        pageRequestDto.setSize(broadcastSearchDto.getSize());
+
+        Pageable pageable = pageRequestDto.toPageable();
+        PageResponseDto<BroadcastDto> result = broadcastService.getAllBroadcasts(keyword,sortBy,pageable);
+
+        return ResponseEntity.ok()
+                .body(new HttpResponse(HttpStatus.OK,"관리자 동영상 리스트 검색 조회 성공",result));
+    }
+
 
     @DeleteMapping("delete")
     public HttpResponse deleteVideo(@RequestBody BroadcastIdsDto request){
