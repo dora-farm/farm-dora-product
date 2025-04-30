@@ -70,9 +70,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList(
                 "http://localhost:3000",
-                "http://localhost:5173",
-                "http://192.168.0.14:3000",
-                "http://192.168.0.35:3000"
+                "http://farmdora.kro.kr"
                 // 추가 필요한 도메인들...
         ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
