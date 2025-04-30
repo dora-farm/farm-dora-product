@@ -7,6 +7,7 @@ import com.farmdora.farmdoraproduct.service.SaleService;
 import com.farmdora.farmdoraproduct.service.StorageService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,6 +22,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+
+import static com.farmdora.farmdoraproduct.common.response.ErrorMessage.*;
+import static com.farmdora.farmdoraproduct.common.response.SuccessMessage.*;
 
 @RestController
 @RequestMapping("/my/seller/item")
@@ -73,8 +77,8 @@ public class SaleController {
 
         //입력 성공 시
         return HttpResponse.builder()
-                .status(200)
-                .message("저장 성공")
+                .status(HttpStatus.OK.value())
+                .message(REGISTER_PRODUCT_SUCCESS.getMessage())
                 .build();
     }
 
@@ -99,8 +103,8 @@ public class SaleController {
 
         //삭제 성공 시
         return HttpResponse.builder()
-                .status(200)
-                .message("삭제 성공")
+                .status(HttpStatus.OK.value())
+                .message(DELETE_FAIL.getMessage())
                 .build();
     }
 
@@ -110,8 +114,8 @@ public class SaleController {
 
         return HttpResponse
                 .builder()
-                .status(200)
-                .message("상세보기 성공")
+                .status(HttpStatus.OK.value())
+                .message(SEARCH_SALES_SUCCESS.getMessage())
                 .data(saleDetailDto)
                 .build();
     }
@@ -127,17 +131,16 @@ public class SaleController {
 
         int success = saleService.updateSale(requestDto, files);
 
-        if(success==1) {
-            //입력 성공 시
+        if (success == 1) {
             return HttpResponse.builder()
-                    .status(200)
-                    .message("수정 성공")
+                    .status(HttpStatus.OK.value())
+                    .message(REVISE_SUCCESS.getMessage())
                     .build();
         }
-        else{
+        else {
             return HttpResponse.builder()
-                    .status(500)
-                    .message("수정 실패")
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .message(UPDATE_FAIL.getMessage())
                     .build();
         }
     }
@@ -149,14 +152,14 @@ public class SaleController {
 
         if (result == 1) {
             return HttpResponse.builder()
-                    .status(200)
-                    .message("상태 수정 성공")
+                    .status(HttpStatus.OK.value())
+                    .message(REVISE_SUCCESS.getMessage())
                     .build();
         }
         else {
             return HttpResponse.builder()
-                    .status(500)
-                    .message("상태 수정 실패")
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .message(UPDATE_FAIL.getMessage())
                     .build();
         }
     }
@@ -168,8 +171,8 @@ public class SaleController {
         List<BroadcastSaleDto> broadcastSaleDtos = saleService.findSellerProductsBySellerId(id);
 
         return HttpResponse.builder()
-                .status(200)
-                .message("비디오 디테일 판매자 기준 판매글 조회 성공")
+                .status(HttpStatus.OK.value())
+                .message(SEARCH_SALES_SUCCESS.getMessage())
                 .data(broadcastSaleDtos)
                 .build();
     }

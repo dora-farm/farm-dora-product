@@ -1,5 +1,6 @@
 package com.farmdora.farmdoraproduct.service;
 
+import com.farmdora.farmdoraproduct.common.exception.ResourceNotFoundException;
 import com.farmdora.farmdoraproduct.dto.BroadcastDto;
 import com.farmdora.farmdoraproduct.dto.BroadcastMainDto;
 import com.farmdora.farmdoraproduct.dto.PageResponseDto;
@@ -53,7 +54,7 @@ public class BroadcastService {
     public Integer createVideo(BroadcastDto broadcastDto) {
         // 1. Seller 엔티티 조회
         Seller seller = sellerRepository.findById(broadcastDto.getSellerId())
-                .orElseThrow(() -> new EntityNotFoundException("판매자 ID: " + broadcastDto.getSellerId() + "를 찾을 수 없습니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("Seller", broadcastDto.getSellerId()));
 
         // 2. Broadcast 엔티티 생성 및 저장
         Broadcast broadcast = Broadcast.builder()
@@ -112,7 +113,7 @@ public class BroadcastService {
     // ID로 방송 조회
     public BroadcastDto getBroadcastById(Integer id) {
         Broadcast broadcast = broadcastRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("동영상을 찾을 수 없습니다. ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Video", id));
         return BroadcastDto.fromEntity(broadcast);
     }
 
@@ -162,7 +163,7 @@ public class BroadcastService {
     @Transactional
     public void deleteBroadcast(Integer id) {
         Broadcast broadcast = broadcastRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("동영상을 찾을 수 없습니다. ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Video", id));
 
         //오리지널 저장파일 제거
         storageService.delete("video/"+broadcast.getContent());
@@ -185,7 +186,7 @@ public class BroadcastService {
     public Integer updateStatus(Integer videoId) {
 
         Broadcast broadcast = broadcastRepository.findById(videoId)
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 동영상 ID입니다: " + videoId));
+                .orElseThrow(() -> new ResourceNotFoundException("Video", videoId));
 
         broadcast.setBlind(!broadcast.isBlind());
 
@@ -222,7 +223,7 @@ public class BroadcastService {
     public BroadcastMainDto getVideoDetail(int id) {
 
         Broadcast broadcast = broadcastRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 동영상 ID입니다: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Video", id));
 
         Seller seller = broadcast.getSeller(); // 판매자 정보 조회
 
