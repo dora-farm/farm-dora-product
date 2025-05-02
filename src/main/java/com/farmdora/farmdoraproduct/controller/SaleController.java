@@ -7,20 +7,19 @@ import com.farmdora.farmdoraproduct.service.SaleService;
 import com.farmdora.farmdoraproduct.service.StorageService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+
+import static com.farmdora.farmdoraproduct.common.response.ErrorMessage.DELETE_FAIL;
+import static com.farmdora.farmdoraproduct.common.response.ErrorMessage.UPDATE_FAIL;
+import static com.farmdora.farmdoraproduct.common.response.SuccessMessage.*;
 
 @RestController
 @RequestMapping("/my/seller/item")
@@ -38,16 +37,20 @@ public class SaleController {
 
     @PostMapping("register")
     public HttpResponse addProduct(
+//            Principal principal,
             @RequestPart("productData") String productDataStr,
             @RequestPart("files") List<MultipartFile> files,
             HttpServletRequest httpServletRequest) throws IOException {
-
-        System.out.println(jwtUtil.extractTokenFromCookie(httpServletRequest));
-
+        //user 아이디 추출
+//        Integer userId = Integer.parseInt(principal.getName());
+        Integer userId = Integer.parseInt("3"); //userId -> sellerId 변환 테스트용
+        Integer sellerId = saleService.getSellerId(userId);
+        System.out.println(sellerId);
         // JSON 문자열을 DTO 객체로 직접 변환
         SaleRequestDto requestDto =
                 new ObjectMapper().readValue(productDataStr, SaleRequestDto.class);
-
+        //principal에서 추출한 sellerId setter로 주입.
+        requestDto.setSellerId(sellerId);
         ArrayList<SaleFileDto> fileList = new ArrayList<>();
         boolean isFirstFile = false; // 첫 번째 파일 여부를 추적하는 플래그, 0이 메인
 
@@ -68,13 +71,12 @@ public class SaleController {
 
         requestDto.setFiles(fileList);
 
-
         Integer saleId = saleService.createSale(requestDto);
 
         //입력 성공 시
         return HttpResponse.builder()
-                .status(200)
-                .message("저장 성공")
+                .status(HttpStatus.OK.value())
+                .message(REGISTER_PRODUCT_SUCCESS.getMessage())
                 .build();
     }
 
@@ -82,16 +84,6 @@ public class SaleController {
     public HttpResponse deleteProduct(@RequestBody SaleIdsDto request){
 
         List<Integer> saleIds = request.getSaleIds();
-        // saleId 중 제일 처음 값을 기준으로 sale->seller_id->seller(user_id) 조회
-        // 판매자 role일 경우 비교 휴 delete 실행
-        Integer user_id= saleService.getUserIdBySaleId(saleIds.get(0));
-
-//        if (user_id!= loginUser.getNo()) {
-//            return HttpResponse.builder()
-//                    .status()
-//                    .data("삭제 권한이 없습니다.")
-//                    .build();
-//        }
 
         for (Integer saleId : saleIds) {
             saleService.deleteSale(saleId);
@@ -99,8 +91,8 @@ public class SaleController {
 
         //삭제 성공 시
         return HttpResponse.builder()
-                .status(200)
-                .message("삭제 성공")
+                .status(HttpStatus.OK.value())
+                .message(DELETE_FAIL.getMessage())
                 .build();
     }
 
@@ -110,8 +102,8 @@ public class SaleController {
 
         return HttpResponse
                 .builder()
-                .status(200)
-                .message("상세보기 성공")
+                .status(HttpStatus.OK.value())
+                .message(SEARCH_SALES_SUCCESS.getMessage())
                 .data(saleDetailDto)
                 .build();
     }
@@ -127,17 +119,16 @@ public class SaleController {
 
         int success = saleService.updateSale(requestDto, files);
 
-        if(success==1) {
-            //입력 성공 시
+        if (success == 1) {
             return HttpResponse.builder()
-                    .status(200)
-                    .message("수정 성공")
+                    .status(HttpStatus.OK.value())
+                    .message(REVISE_SUCCESS.getMessage())
                     .build();
         }
-        else{
+        else {
             return HttpResponse.builder()
-                    .status(500)
-                    .message("수정 실패")
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .message(UPDATE_FAIL.getMessage())
                     .build();
         }
     }
@@ -149,14 +140,14 @@ public class SaleController {
 
         if (result == 1) {
             return HttpResponse.builder()
-                    .status(200)
-                    .message("상태 수정 성공")
+                    .status(HttpStatus.OK.value())
+                    .message(REVISE_SUCCESS.getMessage())
                     .build();
         }
         else {
             return HttpResponse.builder()
-                    .status(500)
-                    .message("상태 수정 실패")
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .message(UPDATE_FAIL.getMessage())
                     .build();
         }
     }
@@ -168,8 +159,8 @@ public class SaleController {
         List<BroadcastSaleDto> broadcastSaleDtos = saleService.findSellerProductsBySellerId(id);
 
         return HttpResponse.builder()
-                .status(200)
-                .message("비디오 디테일 판매자 기준 판매글 조회 성공")
+                .status(HttpStatus.OK.value())
+                .message(SEARCH_SALES_SUCCESS.getMessage())
                 .data(broadcastSaleDtos)
                 .build();
     }

@@ -1,5 +1,6 @@
 package com.farmdora.farmdoraproduct.service;
 
+import com.farmdora.farmdoraproduct.common.exception.ResourceNotFoundException;
 import com.farmdora.farmdoraproduct.dto.*;
 import com.farmdora.farmdoraproduct.entity.*;
 import com.farmdora.farmdoraproduct.repository.*;
@@ -43,11 +44,11 @@ public class SaleService {
     public Integer createSale(SaleRequestDto requestDto) {
         // 1. Seller 엔티티 조회
         Seller seller = sellerRepository.findById(requestDto.getSellerId())
-                .orElseThrow(() -> new RuntimeException("판매자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("Seller", requestDto.getSellerId()));
 
         // SaleType 조회
         SaleType saleType = saleTypeRepository.findById(requestDto.getTypeId())
-                .orElseThrow(() -> new RuntimeException("옵션 타입을 찾을 수 없습니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("Option Type", requestDto.getTypeId()));
 
         // 2. Sale 엔티티 생성 및 저장
         Sale sale = Sale.builder()
@@ -101,7 +102,7 @@ public class SaleService {
 
     public void deleteSale(Integer saleId) {
         Sale sale = saleRepository.findById(saleId)
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 Sale ID입니다: " + saleId));
+                .orElseThrow(() -> new ResourceNotFoundException("Sale", saleId));
 
         List<SaleFile> saleFiles = saleFileRepository.findBySale(sale);
 
@@ -121,7 +122,7 @@ public class SaleService {
 
     public SaleDetailDto getProductDetail(Integer productId) {
         Sale sale = saleRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 Sale ID입니다: " + productId));
+                .orElseThrow(() -> new ResourceNotFoundException("Sale", productId));
 
         List<SaleFile> saleFiles = saleFileRepository.findBySale(sale);
         List<Option> options = optionRepository.findBySale(sale);
@@ -168,7 +169,7 @@ public class SaleService {
     public int updateSale(SaleRequestDto requestDto, List<MultipartFile> files) throws IOException {
         Integer saleId = requestDto.getSaleId();
         Sale sale = saleRepository.findById(saleId)
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 Sale ID입니다: " + saleId));
+                .orElseThrow(() -> new ResourceNotFoundException("Sale", saleId));
 
         // saleID 기준으로 우선 파일과 옵션 제거 후 다시 입력받은 정보 주입
         List<SaleFile> saleFiles = saleFileRepository.findBySale(sale);
@@ -225,7 +226,7 @@ public class SaleService {
             for (OptionDto optionDto : requestDto.getOptions()) {
                 // SaleType 조회
                 SaleType saleType = saleTypeRepository.findById(requestDto.getTypeId())
-                        .orElseThrow(() -> new RuntimeException("옵션 타입을 찾을 수 없습니다."));
+                        .orElseThrow(() -> new ResourceNotFoundException("Option Type", requestDto.getTypeId()));
 
                 Option option = Option.builder()
                         .sale(sale)
@@ -245,7 +246,7 @@ public class SaleService {
     public Integer updateStatus(Integer productId) {
 
         Sale sale = saleRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 Sale ID입니다: " + productId));
+                .orElseThrow(() -> new ResourceNotFoundException("Sale", productId));
 
         sale.setBlind(!sale.isBlind());
 
@@ -274,5 +275,12 @@ public class SaleService {
                     .mainImage(storageService.getObjectStorageImageUrl(mainFile.getSaveFile()))
                     .build();
         }).collect(Collectors.toList());
+    }
+
+    //user_id로 seller_id 추출
+    public Integer getSellerId(Integer userId) {
+        Seller seller = sellerRepository.findSellerByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Sale Id:", userId));
+        return seller.getId();
     }
 }
