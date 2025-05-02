@@ -1,10 +1,7 @@
 package com.farmdora.farmdoraproduct.controller;
 
 import com.farmdora.farmdoraproduct.common.response.HttpResponse;
-import com.farmdora.farmdoraproduct.dto.SaleDetailDto;
-import com.farmdora.farmdoraproduct.dto.SaleFileDto;
-import com.farmdora.farmdoraproduct.dto.SaleIdsDto;
-import com.farmdora.farmdoraproduct.dto.SaleRequestDto;
+import com.farmdora.farmdoraproduct.dto.*;
 import com.farmdora.farmdoraproduct.jwt.JwtUtil;
 import com.farmdora.farmdoraproduct.service.SaleService;
 import com.farmdora.farmdoraproduct.service.StorageService;
@@ -162,6 +159,19 @@ public class SaleController {
                     .message("상태 수정 실패")
                     .build();
         }
+    }
+
+    // 메인 비디오 detail에서 사용하는 메소드, sellerid를 기준으로 판매글 정보를 조회하여 리턴한다.
+    @GetMapping("video/{id}")
+    public HttpResponse video(@PathVariable int id) {
+
+        List<BroadcastSaleDto> broadcastSaleDtos = saleService.findSellerProductsBySellerId(id);
+
+        return HttpResponse.builder()
+                .status(200)
+                .message("비디오 디테일 판매자 기준 판매글 조회 성공")
+                .data(broadcastSaleDtos)
+                .build();
     }
 
 }

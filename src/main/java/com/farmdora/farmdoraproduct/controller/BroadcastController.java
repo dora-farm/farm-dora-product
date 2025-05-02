@@ -61,7 +61,7 @@ public class BroadcastController {
     //전체 조회 기능 (판매자)
     @GetMapping("/seller/list/{size}")
     public ResponseEntity<?> sellerList(@RequestParam(defaultValue = "0") int page, @PathVariable int size) throws IOException {
-        //jwt 코드를 통해서 권한 확인 후 다른 코드 실행
+        //jwt 코드를 통해서 권한 확인 후 코드 실행
         int sellerId = 1;
 
         PageRequestDto pageRequestDto = new PageRequestDto();
@@ -78,7 +78,7 @@ public class BroadcastController {
     //검색 조회 기능 (판매자)
     @PostMapping("/seller/search")
     public ResponseEntity<?> sellerSearchList(@RequestBody BroadcastSearchDto broadcastSearchDto) throws IOException {
-        //jwt 코드를 통해서 권한 확인 후 다른 코드 실행
+        //jwt 코드를 통해서 권한 확인 후 코드 실행
         int sellerId = 1;
 
         String keyword = broadcastSearchDto.getKeyword();
@@ -99,7 +99,7 @@ public class BroadcastController {
     //전체 조회 기능 (관리자)
     @GetMapping("/admin/list/{size}")
     public ResponseEntity<?> adminList(@RequestParam(defaultValue = "0") int page, @PathVariable int size ) throws IOException {
-        //jwt 코드를 통해서 권한 확인 후 다른 코드 실행
+        //jwt 코드를 통해서 권한 확인 후 코드 실행
         PageRequestDto pageRequestDto = new PageRequestDto();
         pageRequestDto.setPage(page);
         pageRequestDto.setSize(size);
@@ -129,7 +129,7 @@ public class BroadcastController {
                 .body(new HttpResponse(HttpStatus.OK,"관리자 동영상 리스트 검색 조회 성공",result));
     }
 
-
+    // 동영상 삭제 (관리자, 판매자)
     @DeleteMapping("delete")
     public HttpResponse deleteVideo(@RequestBody BroadcastIdsDto request){
 
@@ -145,7 +145,8 @@ public class BroadcastController {
                 .message("삭제 성공")
                 .build();
     }
-
+    
+    //bilnd 상태 업데이트 (관리자, 판매자)
     @PutMapping("updateStatus/{videoId}")
     public HttpResponse updateStatus(@PathVariable Integer videoId) {
 
@@ -163,6 +164,34 @@ public class BroadcastController {
                     .message("상태 수정 실패")
                     .build();
         }
+    }
+
+    //전체 조회 기능 (메인)
+    @GetMapping("/main/list")
+    public ResponseEntity<?> mainList(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "6") int size
+    ) throws IOException {
+        //jwt 코드를 통해서 권한 확인 후 코드 실행
+        PageRequestDto pageRequestDto = new PageRequestDto();
+        pageRequestDto.setPage(page);
+        pageRequestDto.setSize(size); //6개 씩 추출
+
+        Pageable pageable = pageRequestDto.toPageable();
+        PageResponseDto<BroadcastMainDto> result = broadcastService.findAllByIsBlindFalse(pageable);
+
+        return ResponseEntity.ok()
+                .body(new HttpResponse(HttpStatus.OK,"메인 동영상 리스트 조회 성공",result));
+    }
+
+    //전체 조회 기능 (메인)
+    @GetMapping("/main/detail/{id}")
+    public ResponseEntity<?> mainDetail(@PathVariable int id) {
+
+        BroadcastMainDto broadcastMainDto = broadcastService.getVideoDetail(id);
+
+        return ResponseEntity.ok()
+                .body(new HttpResponse(HttpStatus.OK,"동영상 조회 성공",broadcastMainDto));
     }
 
 }
