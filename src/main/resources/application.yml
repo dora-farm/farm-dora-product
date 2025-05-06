@@ -1,3 +1,6 @@
+server:
+  port: 8050
+
 spring:
   profiles:
     active: local
@@ -5,3 +8,37 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
+
+  jwt:
+    secret: ENC(AJv6LokZXWCLSDdDEFT1UGe19935JohjmPnbyDPFNQWa+WgVgEaBrsg3Fo8Xo8Myj3KHBd5e5Ka5pLS8nyOm2NNBdvwSAbjfBlpcZENOkyA=)
+
+jasypt:
+  encryptor:
+    password: ${key}
+    bean: jasyptEncryptor
+
+ncp:
+  object-storage:
+    endpoint: https://kr.object.ncloudstorage.com
+    region: kr-standard
+    bucket: bitcamp-68
+
+  image:
+    path: https://zcbg41sa9729.edge.naverncp.com/O8XfcLSSm6/product/
+    type: ?type=h&h=192&ttype=png
+
+  image-optimizer:
+    project-id: O8XfcLSSm6
+    cdn-domain: zcbg41sa9729.edge.naverncp.com
+
+  access-key: ENC(oBvxn6C62QrqLs0N+lCb/UgxymXI4OALon5g0YLglZPwPFQnm6C8tw==)
+  secret-key: ENC(DF529oTSIv/sQj/hDvwfK/wWVcpf2Yrq77NrKNeZws72YdMkTsI0ziMOZr4cCFgda/jcqcaPkDM=)
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always

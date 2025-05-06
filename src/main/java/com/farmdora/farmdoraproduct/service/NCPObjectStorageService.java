@@ -19,15 +19,15 @@ import java.io.OutputStream;
 
 @Service
 public class NCPObjectStorageService implements StorageService {
-    @Value(("${ncp.end-point}"))
+    @Value("${ncp.object-storage.endpoint}")
     private String endPoint;
-    @Value(("${ncp.region-name}"))
+    @Value("${ncp.object-storage.region}")
     private String regionName;
-    @Value(("${ncp.access-key}"))
+    @Value("${ncp.access-key}")
     private String accessKey;
-    @Value(("${ncp.secret-key}"))
+    @Value("${ncp.secret-key}")
     private String secretKey;
-    @Value(("${ncp.bucket-name}"))
+    @Value("${ncp.object-storage.bucket}")
     private String bucketName;
 
     private AmazonS3 s3;
