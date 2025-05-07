@@ -22,7 +22,7 @@ import static com.farmdora.farmdoraproduct.common.response.ErrorMessage.UPDATE_F
 import static com.farmdora.farmdoraproduct.common.response.SuccessMessage.*;
 
 @RestController
-@RequestMapping("/video")
+@RequestMapping("${api.prefix}/video")
 public class BroadcastController {
 
     private final BroadcastService broadcastService;

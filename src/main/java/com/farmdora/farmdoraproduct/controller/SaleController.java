@@ -22,7 +22,7 @@ import static com.farmdora.farmdoraproduct.common.response.ErrorMessage.UPDATE_F
 import static com.farmdora.farmdoraproduct.common.response.SuccessMessage.*;
 
 @RestController
-@RequestMapping("/my/seller/item")
+@RequestMapping("${api.prefix}/my/seller/item")
 public class SaleController {
 
     private final SaleService saleService;

@@ -1,6 +1,3 @@
-server:
-  port: 8050  # 원하는 포트 번호로 변경하세요 (예: 8080, 9090 등)
-
 spring:
   jwt.secret: farmdora-jwt-auth-key-very-secure-and-reliable-#34T^@ks@1p-ZmF!2023
 
