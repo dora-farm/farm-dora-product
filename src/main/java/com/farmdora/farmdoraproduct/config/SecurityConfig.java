@@ -71,6 +71,7 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(Arrays.asList(
 //                "http://localhost:3000",
                 "http://farm-dora.kro.kr",
+                "http://www.farm-dora.kro.kr",
                 "https://farm-dora.kro.kr"
                 // 추가 필요한 도메인들...
         ));
