@@ -40,25 +40,25 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable)
-//                .authorizeHttpRequests(auth -> auth
-//                    // 공개 API
-//                    .requestMatchers("/video/main/**", "/my/seller/item/video/**").permitAll()
-//                    // 특정 권한이 필요한 API
-//                    .requestMatchers("/my/seller/item/register").hasRole("SELLER")
-//                    .requestMatchers("/my/seller/item/update").hasRole("SELLER")
-//                    .requestMatchers("/video/register").hasRole("SELLER")
-//                    .requestMatchers("/video/seller/**").hasRole("SELLER")
-//                    .requestMatchers("/video/admin/**").hasRole("ADMIN")
-//                    // 여러 권한에 접근 가능한 API
-//                    .requestMatchers("/my/seller/item/delete").hasAnyRole("ADMIN", "SELLER")
-//                    .requestMatchers("/my/seller/item/detail").hasAnyRole("ADMIN", "SELLER")
-//                    .requestMatchers("/my/seller/item/updateStatus").hasAnyRole("ADMIN", "SELLER")
-//                    .requestMatchers("/video/delete").hasAnyRole("ADMIN", "SELLER")
-//                    .requestMatchers("/video/updateStatus").hasAnyRole("ADMIN", "SELLER")
-//                    // 그 외 요청은 인증만 필요
-//                    .anyRequest().authenticated())
-//                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil),
-//                        UsernamePasswordAuthenticationFilter.class)
+                .authorizeHttpRequests(auth -> auth
+                    // 공개 API
+                    .requestMatchers("/video/main/**", "/my/seller/item/video/**").permitAll()
+                    // 특정 권한이 필요한 API
+                    .requestMatchers("/my/seller/item/register").hasRole("SELLER")
+                    .requestMatchers("/my/seller/item/update").hasRole("SELLER")
+                    .requestMatchers("/video/register").hasRole("SELLER")
+                    .requestMatchers("/video/seller/**").hasRole("SELLER")
+                    .requestMatchers("/video/admin/**").hasRole("ADMIN")
+                    // 여러 권한에 접근 가능한 API
+                    .requestMatchers("/my/seller/item/delete").hasAnyRole("ADMIN", "SELLER")
+                    .requestMatchers("/my/seller/item/detail").hasAnyRole("ADMIN", "SELLER")
+                    .requestMatchers("/my/seller/item/updateStatus").hasAnyRole("ADMIN", "SELLER")
+                    .requestMatchers("/video/delete").hasAnyRole("ADMIN", "SELLER")
+                    .requestMatchers("/video/updateStatus").hasAnyRole("ADMIN", "SELLER")
+                    // 그 외 요청은 인증만 필요
+                    .anyRequest().authenticated())
+                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil),
+                        UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement((session)->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();
@@ -66,17 +66,12 @@ public class SecurityConfig {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-        // CORS 설정 유지
-//        CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.setAllowedOrigins(Collections.singletonList(("http://192.168.0.14:3000")));
-//        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-//        configuration.setAllowedHeaders(List.of("*"));
-//        configuration.setAllowCredentials(true);
 
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList(
-                "http://localhost:3000",
-                "http://farmdora.kro.kr"
+//                "http://localhost:3000",
+                "http://farm-dora.kro.kr",
+                "https://farm-dora.kro.kr"
                 // 추가 필요한 도메인들...
         ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));

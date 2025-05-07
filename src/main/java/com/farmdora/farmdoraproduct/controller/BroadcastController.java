@@ -37,7 +37,7 @@ public class BroadcastController {
 
     @PostMapping("register")
     public HttpResponse addVideo(
-//            Principal principal,
+            Principal principal,
             @RequestParam("title") String title,
             @RequestParam("desc") String desc,
             @RequestParam("video") MultipartFile video) throws IOException {
@@ -46,13 +46,10 @@ public class BroadcastController {
         String extention = FilenameUtils.getExtension(video.getOriginalFilename());
         String filename = UUID.randomUUID().toString();
 
-        System.out.println(filename);
-
         storageService.upload("video/" + filename +"."+extention, video.getInputStream());
 
-        //user 아이디 추출
-//        Integer userId = Integer.parseInt(principal.getName());
-        Integer userId = Integer.parseInt("3"); //userId -> sellerId 변환 테스트용
+        //JWT 토큰에서 user 아이디 추출, sellerId로 변환
+        Integer userId = Integer.parseInt(principal.getName());
         Integer sellerId = saleService.getSellerId(userId);
 
         BroadcastDto broadcastDto = BroadcastDto.builder()
@@ -74,12 +71,11 @@ public class BroadcastController {
     //전체 조회 기능 (판매자)
     @GetMapping("/seller/list/{size}")
     public ResponseEntity<?> sellerList(
-            //            Principal principal,
+                        Principal principal,
             @RequestParam(defaultValue = "0") int page, @PathVariable int size) throws IOException {
 
-        //user 아이디 추출
-//        Integer userId = Integer.parseInt(principal.getName());
-        Integer userId = Integer.parseInt("3"); //userId -> sellerId 변환 테스트용
+        //JWT 토큰에서 user 아이디 추출, sellerId로 변환
+        Integer userId = Integer.parseInt(principal.getName());
         Integer sellerId = saleService.getSellerId(userId);
 
         PageRequestDto pageRequestDto = new PageRequestDto();
@@ -96,11 +92,10 @@ public class BroadcastController {
     //검색 조회 기능 (판매자)
     @PostMapping("/seller/search")
     public ResponseEntity<?> sellerSearchList(
-            //            Principal principal,
+                        Principal principal,
             @RequestBody BroadcastSearchDto broadcastSearchDto) throws IOException {
-        //user 아이디 추출
-//        Integer userId = Integer.parseInt(principal.getName());
-        Integer userId = Integer.parseInt("3"); //userId -> sellerId 변환 테스트용
+        //JWT 토큰에서 user 아이디 추출, sellerId로 변환
+        Integer userId = Integer.parseInt(principal.getName());
         Integer sellerId = saleService.getSellerId(userId);
 
         String keyword = broadcastSearchDto.getKeyword();
@@ -121,7 +116,6 @@ public class BroadcastController {
     //전체 조회 기능 (관리자)
     @GetMapping("/admin/list/{size}")
     public ResponseEntity<?> adminList(@RequestParam(defaultValue = "0") int page, @PathVariable int size ) throws IOException {
-        //jwt 코드를 통해서 권한 확인 후 코드 실행
         PageRequestDto pageRequestDto = new PageRequestDto();
         pageRequestDto.setPage(page);
         pageRequestDto.setSize(size);
@@ -188,13 +182,12 @@ public class BroadcastController {
         }
     }
 
-    //전체 조회 기능 (메인)
+    //전체 조회 기능 (메인/비디오)
     @GetMapping("/main/list")
     public ResponseEntity<?> mainList(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "6") int size
     ) throws IOException {
-        //jwt 코드를 통해서 권한 확인 후 코드 실행
         PageRequestDto pageRequestDto = new PageRequestDto();
         pageRequestDto.setPage(page);
         pageRequestDto.setSize(size); //6개 씩 추출
@@ -206,7 +199,7 @@ public class BroadcastController {
                 .body(new HttpResponse(HttpStatus.OK,SEARCH_VIDEOS_SUCCESS.getMessage(),result));
     }
 
-    //전체 조회 기능 (메인)
+    //상세 조회 기능 (메인/비디오)
     @GetMapping("/main/detail/{id}")
     public ResponseEntity<?> mainDetail(@PathVariable int id) {
 
@@ -216,7 +209,7 @@ public class BroadcastController {
                 .body(new HttpResponse(HttpStatus.OK,SEARCH_VIDEOS_SUCCESS.getMessage(),broadcastMainDto));
     }
 
-    //최신 10개의 동영상 조회 (메인), 페이지 사용하지 않지만 기존 코드 재활용
+    //최신 10개의 동영상 조회 (메인/홈), 페이지 사용하지 않지만 기존 코드 재활용
     @GetMapping("/main/home")
     public ResponseEntity<?> mainHomeSlider(
             @RequestParam(defaultValue = "0") int page,

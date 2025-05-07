@@ -1,13 +1,53 @@
-spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ENC(6oGONiPCWIUx52hvMAL3raMSI4RbFPACyW/VM+Bto0LGyxcs4EsJY6wnxqGHuI12LRABZovKxxOIoZK8DWclXdN46jLnzb3lMM0Mz9DGmIHR7q1lSHgO+WGMpgD3/s3isHhvEiE0qjPyGDY0pWc74/4ZdYQPg6Bm)
-    username: ENC(urT4wb+lNEUDjKaJRGqSl7/imFQ2IBbx)
-    password: ENC(wcEiMtZdcspXjQt3JXr6kus48hFneUJZ)
-    hikari:
-      max-lifetime: 580000
+server:
+  port: 8050  # 원하는 포트 번호로 변경하세요 (예: 8080, 9090 등)
 
-  data:
-    redis:
-      host: ENC(VFdUc/6tLyxg23xcLaVduyy/WRypzmZy)
-      port: 6379
+spring:
+  jwt.secret: farmdora-jwt-auth-key-very-secure-and-reliable-#34T^@ks@1p-ZmF!2023
+
+  datasource:
+    url: ENC(9aMpRCP4McbiWX1Yx8ztampu2Ni9Oj7KBBis0LF0JlI6l7n0sOEfk+dvYBoJlhS+zHq0Wn+ZIXg0hLaerZo8bN7H5DRtk8ZB)
+    username: ENC(UlD+uvRdApdG72evIGA67aCEL/K7/Zst)
+    password: ENC(eZxUihN3+B+ZSKWyty+63hSKKor1Yy9c)
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  servlet:
+    multipart:
+      enabled: true  # 명시적으로 활성화
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+  logging:
+    level:
+      org.springframework.web: DEBUG
+      org.hibernate: INFO
+
+  jpa:
+    hibernate:
+      ddl-auto: validate  # none, validate, update, create, create-drop 중 선택
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+ncp:
+  object-storage:
+    endpoint: https://kr.object.ncloudstorage.com
+    region: kr-standard
+    bucket: bitcamp-68
+
+  image:
+    path: https://zcbg41sa9729.edge.naverncp.com/O8XfcLSSm6/product/
+    type: ?type=h&h=192&ttype=png
+
+  image-optimizer:
+    project-id: O8XfcLSSm6
+    cdn-domain: zcbg41sa9729.edge.naverncp.com
+
+  access-key: ENC(oBvxn6C62QrqLs0N+lCb/UgxymXI4OALon5g0YLglZPwPFQnm6C8tw==)
+  secret-key: ENC(DF529oTSIv/sQj/hDvwfK/wWVcpf2Yrq77NrKNeZws72YdMkTsI0ziMOZr4cCFgda/jcqcaPkDM=)
+
+jasypt:
+  encryptor:
+    password: ${key}
+    bean: jasyptEncryptor

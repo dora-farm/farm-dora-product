@@ -27,23 +27,20 @@ public class SaleController {
 
     private final SaleService saleService;
     private final StorageService storageService;
-    private final JwtUtil jwtUtil;
 
     public SaleController(SaleService saleService, StorageService storageService, JwtUtil jwtUtil) {
         this.saleService = saleService;
         this.storageService = storageService;
-        this.jwtUtil = jwtUtil;
     }
 
     @PostMapping("register")
     public HttpResponse addProduct(
-//            Principal principal,
+            Principal principal,
             @RequestPart("productData") String productDataStr,
             @RequestPart("files") List<MultipartFile> files,
             HttpServletRequest httpServletRequest) throws IOException {
-        //user 아이디 추출
-//        Integer userId = Integer.parseInt(principal.getName());
-        Integer userId = Integer.parseInt("3"); //userId -> sellerId 변환 테스트용
+        //JWT 토큰에서 user 아이디 추출, sellerId로 변환
+        Integer userId = Integer.parseInt(principal.getName());
         Integer sellerId = saleService.getSellerId(userId);
         System.out.println(sellerId);
         // JSON 문자열을 DTO 객체로 직접 변환
