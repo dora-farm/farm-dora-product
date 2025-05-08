@@ -41,7 +41,7 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/actuator/health").permitAll()
+                        .requestMatchers("/actuator/**").permitAll()  // 모든 Actuator 엔드포인트 허용
                         // 공개 API
                         .requestMatchers("/video/main/**", "/my/seller/item/video/**").permitAll()
                         // 특정 권한이 필요한 API
