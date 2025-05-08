@@ -41,23 +41,23 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers("/actuator/**").permitAll()  // 모든 Actuator 엔드포인트 허용
+                        .requestMatchers("/actuator/**").permitAll()  // 모든 Actuator 엔드포인트 허용
                         // 공개 API
-                        .requestMatchers("/video/main/**", "/my/seller/item/video/**").permitAll()
+                        .requestMatchers("/api/product/video/main/**", "/my/seller/item/video/**").permitAll()
                         // 특정 권한이 필요한 API
-                        .requestMatchers("/my/seller/item/register").hasRole("SELLER")
-                        .requestMatchers("/my/seller/item/update").hasRole("SELLER")
-                        .requestMatchers("/video/register").hasRole("SELLER")
-                        .requestMatchers("/video/seller/**").hasRole("SELLER")
-                        .requestMatchers("/video/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/product//my/seller/item/register").hasRole("SELLER")
+                        .requestMatchers("/api/product//my/seller/item/update").hasRole("SELLER")
+                        .requestMatchers("/api/product//video/register").hasRole("SELLER")
+                        .requestMatchers("/api/product//video/seller/**").hasRole("SELLER")
+                        .requestMatchers("/api/product//video/admin/**").hasRole("ADMIN")
                         // 여러 권한에 접근 가능한 API
-                        .requestMatchers("/my/seller/item/delete").hasAnyRole("ADMIN", "SELLER")
-                        .requestMatchers("/my/seller/item/detail").hasAnyRole("ADMIN", "SELLER")
-                        .requestMatchers("/my/seller/item/updateStatus").hasAnyRole("ADMIN", "SELLER")
-                        .requestMatchers("/video/delete").hasAnyRole("ADMIN", "SELLER")
-                        .requestMatchers("/video/updateStatus").hasAnyRole("ADMIN", "SELLER")
+                        .requestMatchers("/api/product//my/seller/item/delete").hasAnyRole("ADMIN", "SELLER")
+                        .requestMatchers("/api/product//my/seller/item/detail").hasAnyRole("ADMIN", "SELLER")
+                        .requestMatchers("/api/product//my/seller/item/updateStatus").hasAnyRole("ADMIN", "SELLER")
+                        .requestMatchers("/api/product//video/delete").hasAnyRole("ADMIN", "SELLER")
+                        .requestMatchers("/api/product//video/updateStatus").hasAnyRole("ADMIN", "SELLER")
                         // 그 외 요청은 인증만 필요
-                        .anyRequest().authenticated())
+                        .anyRequest().permitAll())
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtil),
                         UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement((session)->

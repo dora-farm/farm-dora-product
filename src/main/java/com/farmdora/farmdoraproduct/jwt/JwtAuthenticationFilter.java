@@ -1,16 +1,17 @@
 package com.farmdora.farmdoraproduct.jwt;
 
+import static com.farmdora.farmdoraproduct.config.JwtConstants.*;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
-
-import java.io.IOException;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -21,26 +22,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+        String token = request.getHeader(AUTHORIZATION_HEADER);
+        if (token != null) {
+            token = token.replace(TOKEN_PREFIX, "");
+        }
 
-        String token = jwtUtil.extractTokenFromCookie(request);
+        if (token != null && jwtUtil.validateToken(token)) {
+            int userId = jwtUtil.getUserId(token);
 
-        log.info("token: {}", token);
-
-            // 토큰 유효성 검사
-            if (jwtUtil.validateToken(token)) {
-                String username = jwtUtil.getUsername(token);
-                log.debug("username : {}", username);
-
-                // Spring Security Context에 사용자 정보와 권한 추가
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        username, null, jwtUtil.getAuthorities(token));
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            } else {
-                // 토큰이 유효하지 않은 경우
-                log.debug("Invalid token");
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                return;
-            }
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(userId, null, jwtUtil.getAuthorities(token));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
 
         filterChain.doFilter(request, response);
     }
