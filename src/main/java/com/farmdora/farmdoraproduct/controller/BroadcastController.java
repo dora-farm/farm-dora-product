@@ -38,9 +38,9 @@ public class BroadcastController {
     @PostMapping("register")
     public HttpResponse addVideo(
             Principal principal,
-            @RequestParam("title") String title,
-            @RequestParam("desc") String desc,
-            @RequestParam("video") MultipartFile video) throws IOException {
+            @RequestPart("video") MultipartFile video,
+            @RequestPart(value = "title", required = true) String title,
+            @RequestPart(value = "desc", required = true) String desc) throws IOException {
 
         //확장자 추출
         String extention = FilenameUtils.getExtension(video.getOriginalFilename());
@@ -61,11 +61,20 @@ public class BroadcastController {
 
         Integer broadcastId = broadcastService.createVideo(broadcastDto);
 
-        //입력 성공 시
-        return HttpResponse.builder()
-                .status(HttpStatus.OK.value())
-                .message(REGISTER_VIDEO_SUCCESS.getMessage())
-                .build();
+        if(broadcastId != 0 ) {
+            //입력 성공 시
+            return HttpResponse.builder()
+                    .status(HttpStatus.OK.value())
+                    .message(REGISTER_VIDEO_SUCCESS.getMessage())
+                    .build();
+        }
+        else{
+            //입력 실패 시
+            return HttpResponse.builder()
+                    .status(HttpStatus.OK.value())
+                    .message(UPDATE_FAIL.getMessage())
+                    .build();
+        }
     }
 
     //전체 조회 기능 (판매자)

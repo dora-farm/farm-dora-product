@@ -1,5 +1,5 @@
 spring:
-  jwt.secret: farmdora-jwt-auth-key-very-secure-and-reliable-#34T^@ks@1p-ZmF!2023
+  jwt.secret: ENC(5HM5B2Fz3uC72OyPp4qIAyVTHLyIzsFpO12fyz7lpGpQzQ1OljNkev8E7oDgB3Dkq0hK3/k96yhcfu+aeC7DoyQTJeRUhFdd7THjVMf+8X0=)
 
   datasource:
     url: ENC(9aMpRCP4McbiWX1Yx8ztampu2Ni9Oj7KBBis0LF0JlI6l7n0sOEfk+dvYBoJlhS+zHq0Wn+ZIXg0hLaerZo8bN7H5DRtk8ZB)
@@ -41,8 +41,8 @@ ncp:
     project-id: O8XfcLSSm6
     cdn-domain: zcbg41sa9729.edge.naverncp.com
 
-  access-key: ENC(oBvxn6C62QrqLs0N+lCb/UgxymXI4OALon5g0YLglZPwPFQnm6C8tw==)
-  secret-key: ENC(DF529oTSIv/sQj/hDvwfK/wWVcpf2Yrq77NrKNeZws72YdMkTsI0ziMOZr4cCFgda/jcqcaPkDM=)
+  access-key: ENC(3YX4zGiApEHuwNUAo0OxXvS4fKVHSuAnEeaBxB7NxyjauHHTl4i+5A==)
+  secret-key: ENC(r/8rfa71E6gNR/wGJu6STB85kj8Q7A3LUJT3l+ARddNvR9uHBAsTNnOxukqac1SkUfYfavV/toM=)
 
 jasypt:
   encryptor:
