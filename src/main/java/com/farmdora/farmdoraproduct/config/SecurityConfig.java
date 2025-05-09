@@ -45,17 +45,17 @@ public class SecurityConfig {
                         // 공개 API
                         .requestMatchers("/api/product/video/main/**", "/my/seller/item/video/**").permitAll()
                         // 특정 권한이 필요한 API
-                        .requestMatchers("/api/product//my/seller/item/register").hasRole("SELLER")
-                        .requestMatchers("/api/product//my/seller/item/update").hasRole("SELLER")
-                        .requestMatchers("/api/product//video/register").hasRole("SELLER")
-                        .requestMatchers("/api/product//video/seller/**").hasRole("SELLER")
-                        .requestMatchers("/api/product//video/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/product/my/seller/item/register").hasRole("SELLER")
+                        .requestMatchers("/api/product/my/seller/item/update").hasRole("SELLER")
+                        .requestMatchers("/api/product/video/register").hasRole("SELLER")
+                        .requestMatchers("/api/product/video/seller/**").hasRole("SELLER")
+                        .requestMatchers("/api/product/video/admin/**").hasRole("ADMIN")
                         // 여러 권한에 접근 가능한 API
-                        .requestMatchers("/api/product//my/seller/item/delete").hasAnyRole("ADMIN", "SELLER")
-                        .requestMatchers("/api/product//my/seller/item/detail").hasAnyRole("ADMIN", "SELLER")
-                        .requestMatchers("/api/product//my/seller/item/updateStatus").hasAnyRole("ADMIN", "SELLER")
-                        .requestMatchers("/api/product//video/delete").hasAnyRole("ADMIN", "SELLER")
-                        .requestMatchers("/api/product//video/updateStatus").hasAnyRole("ADMIN", "SELLER")
+                        .requestMatchers("/api/product/my/seller/item/delete").hasAnyRole("ADMIN", "SELLER")
+                        .requestMatchers("/api/product/my/seller/item/detail").hasAnyRole("ADMIN", "SELLER")
+                        .requestMatchers("/api/product/my/seller/item/updateStatus").hasAnyRole("ADMIN", "SELLER")
+                        .requestMatchers("/api/product/video/delete").hasAnyRole("ADMIN", "SELLER")
+                        .requestMatchers("/api/product/video/updateStatus").hasAnyRole("ADMIN", "SELLER")
                         // 그 외 요청은 인증만 필요
                         .anyRequest().permitAll())
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtil),
@@ -70,7 +70,7 @@ public class SecurityConfig {
 
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList(
-//                "http://localhost:3000",
+                "http://localhost:3000",
                 "http://farm-dora.kro.kr",
                 "http://www.farm-dora.kro.kr",
                 "https://farm-dora.kro.kr",
