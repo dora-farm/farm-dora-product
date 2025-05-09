@@ -73,7 +73,8 @@ public class SecurityConfig {
 //                "http://localhost:3000",
                 "http://farm-dora.kro.kr",
                 "http://www.farm-dora.kro.kr",
-                "https://farm-dora.kro.kr"
+                "https://farm-dora.kro.kr",
+                "https://www.farm-dora.kro.kr"
                 // 추가 필요한 도메인들...
         ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
